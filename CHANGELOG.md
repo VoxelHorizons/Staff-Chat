@@ -1,3 +1,11 @@
+## 1.4.8 - Minecraft 26.3 / DiscordSRV 1.30.5 compatibility
+
+- Compile against Paper 26.3 and DiscordSRV 1.30.5 using Java 25.
+- Refresh Discord channel mappings after DiscordSRV connects or reloads, without requiring a Staff Chat reload.
+- Use immutable channel snapshots to avoid concurrent modifications between JDA callbacks and Bukkit configuration reloads.
+- Avoid subscribing to a DiscordSRV instance that is present but disabled.
+- Add GitHub Actions Maven build with a downloadable JAR artifact.
+
 # Changelog
 
 ## DiscordSRV-Staff-Chat 1.4.7

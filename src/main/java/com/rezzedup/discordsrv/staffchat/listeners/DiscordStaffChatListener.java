@@ -24,7 +24,9 @@ package com.rezzedup.discordsrv.staffchat.listeners;
 
 import com.rezzedup.discordsrv.staffchat.StaffChatPlugin;
 import github.scarsz.discordsrv.api.Subscribe;
+import github.scarsz.discordsrv.api.events.ConfigReloadedEvent;
 import github.scarsz.discordsrv.api.events.DiscordGuildMessagePreProcessEvent;
+import github.scarsz.discordsrv.api.events.DiscordReadyEvent;
 
 @SuppressWarnings("unused")
 public class DiscordStaffChatListener {
@@ -37,5 +39,23 @@ public class DiscordStaffChatListener {
 	@Subscribe
 	public void onDiscordChat(DiscordGuildMessagePreProcessEvent event) {
 		plugin.discordBridge().handleDiscordMessage(event);
+	}
+
+	@Subscribe
+	public void onDiscordReady(DiscordReadyEvent event) {
+		refreshChannelsOnMainThread();
+	}
+
+	@Subscribe
+	public void onDiscordReload(ConfigReloadedEvent event) {
+		refreshChannelsOnMainThread();
+	}
+
+	private void refreshChannelsOnMainThread() {
+		plugin.sync().run(() -> {
+			if (plugin.isEnabled()) {
+				plugin.discordBridge().refreshChannels();
+			}
+		});
 	}
 }

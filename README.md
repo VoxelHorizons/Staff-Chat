@@ -3,18 +3,20 @@
 # DiscordSRV-Staff-Chat
 
 [![](https://img.shields.io/badge/License-MIT-blue)](./LICENSE "Project License: MIT")
-[![](https://img.shields.io/badge/Java-11-orange)](# "Java Version: 11")
+[![](https://img.shields.io/badge/Java-25-orange)](# "Java Version: 11")
 [![](https://img.shields.io/github/v/release/DiscordSRV/Staff-Chat.svg?label=Release&color=ok)](https://github.com/DiscordSRV/Staff-Chat/releases/latest "Latest Release")
 [![](https://img.shields.io/spiget/downloads/44245?color=yellow&label=Spigot%20Downloads)](https://www.spigotmc.org/resources/discordsrv-staff-chat.44245/ "Spigot Resource Page")
 [![](https://img.shields.io/modrinth/dt/uD7Bzf5q?color=%2300af5c&label=Modrinth%20Downloads&logo=modrinth)](https://modrinth.com/plugin/uD7Bzf5q "Modrinth Project Page")
 
 </div>
 
-DiscordSRV-Staff-Chat connects private Minecraft staff channels to DiscordSRV channels. Version 1.4.7 is a cleanup, optimization, and stability release focused on safer DiscordSRV lifecycle handling, cached channel resolution, clearer diagnostics, and lower overhead on join/chat paths.
+DiscordSRV-Staff-Chat connects private Minecraft staff channels to DiscordSRV channels. Version 1.4.8 targets **Minecraft Java 26.3 / Paper 26.3 (Java 25)** and **DiscordSRV 1.30.5**, retaining staff/admin chat and adding automatic channel re-resolution after DiscordSRV connects or reloads.
 
 ## Installation
 
-1. Install **DiscordSRV** and **DiscordSRV-Staff-Chat** in your server's `plugins/` directory.
+Requirements for this fork build: Paper **26.3**, **Java 25**, and DiscordSRV **1.30.5**. The JAR is compiled for Java 25; older Java runtimes cannot load this build. Other server versions have not been verified.
+
+1. Install **DiscordSRV 1.30.5** and **DiscordSRV-Staff-Chat** in your server's `plugins/` directory.
 2. Restart the server once so configs are generated.
 3. Add DiscordSRV channel links for the chats you want to relay.
 4. Run `/discord reload` or restart the server again.
@@ -105,11 +107,11 @@ Legacy color codes and supported hex color formats still work. PlaceholderAPI pl
 
 ## Reloading
 
-Use `/managestaffchat reload` after config changes. The reload refreshes config files, persisted profile data, update-check settings, and cached DiscordSRV channel references.
+Use `/managestaffchat reload` after config changes. The reload refreshes config files, persisted profile data, update-check settings, and cached DiscordSRV channel references. Channel references are also refreshed automatically when DiscordSRV finishes connecting or fires its configuration-reloaded event.
 
 ## Debugging
 
-Use `/managestaffchat debug` to toggle debug logging. Debug file writes are scheduled asynchronously in 1.4.7 so debug mode is less likely to affect join or chat performance.
+Use `/managestaffchat debug` to toggle debug logging. Debug file writes are scheduled asynchronously so debug mode is less likely to affect join or chat performance.
 
 ## Troubleshooting
 
