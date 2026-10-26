@@ -106,7 +106,7 @@ public class StaffChatPlugin extends JavaPlugin implements BukkitTaskSource, Buk
 		
 		@NullOr Plugin discordSrv = getServer().getPluginManager().getPlugin(DISCORDSRV);
 		
-		if (discordSrv != null) {
+		if (discordSrv != null && discordSrv.isEnabled()) {
 			debug(getClass()).log("Enable", () -> "DiscordSRV is enabled");
 			subscribeToDiscordSrv(discordSrv);
 		} else {

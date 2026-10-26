@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import pl.tlinkowski.annotation.basic.NullOr;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -41,11 +42,13 @@ public class DiscordBridge {
 	private static final long CHANNEL_WARNING_INTERVAL_MS = 60_000L;
 	
 	private final StaffChatPlugin plugin;
-	private final Map<ChatChannel, TextChannel> channels = new EnumMap<>(ChatChannel.class);
+	// DiscordSRV invokes message events on JDA threads while Bukkit reloads mappings on the main thread.
+	// Publish an immutable snapshot so Discord messages never iterate a concurrently modified EnumMap.
+	private volatile Map<ChatChannel, TextChannel> channels = Collections.emptyMap();
 	private final Map<ChatChannel, Long> lastChannelWarnings = new EnumMap<>(ChatChannel.class);
 	
 	private @NullOr DiscordStaffChatListener listener;
-	private DiscordHookState state = DiscordHookState.UNAVAILABLE;
+	private volatile DiscordHookState state = DiscordHookState.UNAVAILABLE;
 	
 	DiscordBridge(StaffChatPlugin plugin) {
 		this.plugin = plugin;
@@ -104,13 +107,13 @@ public class DiscordBridge {
 			return;
 		}
 		
-		clearChannels();
-		
+		EnumMap<ChatChannel, TextChannel> updated = new EnumMap<>(ChatChannel.class);
 		for (ChatChannel channel : ChatChannel.values()) {
-			resolve(channel).ifPresent(resolved -> channels.put(channel, resolved));
+			resolve(channel).ifPresent(resolved -> updated.put(channel, resolved));
 		}
 		
-		state = (channels.size() == ChatChannel.values().length)
+		channels = Collections.unmodifiableMap(updated);
+		state = (updated.size() == ChatChannel.values().length)
 			? DiscordHookState.READY
 			: DiscordHookState.DEGRADED;
 	}
@@ -120,7 +123,7 @@ public class DiscordBridge {
 	}
 	
 	public boolean handleDiscordMessage(DiscordGuildMessagePreProcessEvent event) {
-		if (!isReady()) {
+		if (!plugin.isEnabled() || !isReady()) {
 			return false;
 		}
 		
@@ -173,14 +176,14 @@ public class DiscordBridge {
 		@NullOr TextChannel channel = getChannelOrNull(chatChannel);
 		
 		if (channel == null) {
-			channel = resolve(chatChannel).orElse(null);
-			
+			// DiscordSRV may finish connecting after this plugin enables. Refresh all channel mappings
+			// rather than mutating the snapshot used by asynchronous Discord event handlers.
+			refreshChannels();
+			channel = getChannelOrNull(chatChannel);
 			if (channel == null) {
 				warnMissingChannel(chatChannel);
 				return;
 			}
-			
-			channels.put(chatChannel, channel);
 		}
 		TextChannel resolvedChannel = channel;
 		
@@ -235,7 +238,7 @@ public class DiscordBridge {
 	}
 	
 	private void clearChannels() {
-		channels.clear();
+		channels = Collections.emptyMap();
 		lastChannelWarnings.clear();
 	}
 	

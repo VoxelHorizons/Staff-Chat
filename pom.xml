@@ -6,7 +6,7 @@
   
   <groupId>com.rezzedup</groupId>
   <artifactId>discordsrv-staff-chat</artifactId>
-  <version>1.4.7</version>
+  <version>1.4.8</version>
   
   <name>DiscordSRV-Staff-Chat</name>
   <inceptionYear>2017</inceptionYear>
@@ -14,8 +14,7 @@
   <description>A staff-chat plugin that hooks into DiscordSRV.</description>
   
   <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>25</maven.compiler.release>
     
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,12 +29,12 @@
   
   <repositories>
     <repository>
-      <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
     <repository>
       <id>scarsz-nexus</id>
-      <url>https://nexus.scarsz.me/content/repositories/public/</url>
+      <url>https://nexus.scarsz.me/content/groups/public/</url>
     </repository>
     <repository>
       <id>jitpack.io</id>
@@ -44,18 +43,18 @@
   </repositories>
   
   <dependencies>
-    <!-- Spigot API (via spigot-repo) -->
+    <!-- Paper API for Minecraft Java 26.3 (Java 25) -->
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.21.3-R0.1-SNAPSHOT</version>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+      <version>26.3.build.218-stable</version>
       <scope>provided</scope>
     </dependency>
     <!-- DiscordSRV (via scarsz-nexus) -->
     <dependency>
       <groupId>com.discordsrv</groupId>
       <artifactId>discordsrv</artifactId>
-      <version>1.27.0</version>
+      <version>1.30.5</version>
       <scope>provided</scope>
     </dependency>
     <!-- PlaceholderAPI (via jitpack.io) -->
@@ -113,10 +112,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.14.1</version>
         <configuration>
-          <source>${maven.compiler.source}</source>
-          <target>${maven.compiler.target}</target>
+          <release>${maven.compiler.release}</release>
         </configuration>
       </plugin>
       <!-- Shade dependencies -->
